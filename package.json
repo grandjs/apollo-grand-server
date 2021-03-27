@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "description": "apollo graphql server for grandjs framework",
   "main": "dist/index.js",
+  "directories": {
+    "src": "./src",
+    "lib": "./dist"
+},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",
