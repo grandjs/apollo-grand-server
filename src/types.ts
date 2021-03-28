@@ -6,8 +6,7 @@ import {
 } from 'apollo-server-core';
 import corsMiddleware from 'cors';
 import { OptionsJson } from 'body-parser';
-import { Constructable } from 'grandjs/lib/interfaces';
-import { Router } from 'grandjs';
+import { Router, Constructable } from 'grandjs';
 
 export interface GrandContext {
   req: Request;

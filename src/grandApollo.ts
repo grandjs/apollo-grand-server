@@ -30,7 +30,7 @@ export function graphqlGrand(
     );
   }
 
-  return (req, res, next): void => {
+  return (req:Request, res:Response, next:Function): void => {
     runHttpQuery([req, res], {
       method: req.method,
       options: options,

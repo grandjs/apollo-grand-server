@@ -85,16 +85,16 @@ export class ApolloServer extends ApolloServerBase {
     if (this.uploadsConfig && typeof processFileUploads === 'function') {
       uploadsMiddleware = fileUploadMiddleware(this.uploadsConfig, this);
     }
-    class ApolloServerRouter extends Router {
-      cors = {
-        origin: '*',
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        preflightContinue: false,
-        optionsSuccessStatus: 204
-      };
-      base = basePath;
-    }
-    const router = new ApolloServerRouter({base: '/graphql'});
+    // class ApolloServerRouter extends Router {
+    //   cors = {
+    //     origin: '*',
+    //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    //     preflightContinue: false,
+    //     optionsSuccessStatus: 204
+    //   };
+    //   base = basePath;
+    // }
+    const router = new Router({base: '/graphql'});
     // const middleWares = []
     router.use(`/.well-known/apollo/server-health`, (req: Request, res:Response) => {
       // Response follows https://tools.ietf.org/html/draft-inadarei-api-health-check-01
@@ -127,7 +127,7 @@ export class ApolloServer extends ApolloServerBase {
     if (uploadsMiddleware) {
       router.use('/', uploadsMiddleware);
     }
-    router.use('/', (req: Request, res: Response, next) => {
+    router.use('/', (req: Request, res: Response, next:Function) => {
       req.method = req.method.toUpperCase();
       if (self.playgroundOptions && req.method === 'GET') {
         // perform more expensive content-type check only if necessary
