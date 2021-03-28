@@ -77,24 +77,14 @@ export class ApolloServer extends ApolloServerBase {
     return true;
   }
 
-  public applyMiddleware({Router, ...rest }: ServerRegistration) {
-    const basePath = '/graphql';
+  public applyMiddleware({Router, path = '/graphql', ...rest }: ServerRegistration) {
     const self = this;
     this.ensureStarting();
     let uploadsMiddleware;
     if (this.uploadsConfig && typeof processFileUploads === 'function') {
       uploadsMiddleware = fileUploadMiddleware(this.uploadsConfig, this);
     }
-    // class ApolloServerRouter extends Router {
-    //   cors = {
-    //     origin: '*',
-    //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    //     preflightContinue: false,
-    //     optionsSuccessStatus: 204
-    //   };
-    //   base = basePath;
-    // }
-    const router = new Router({base: '/graphql'});
+    const router = new Router({base: path});
     // const middleWares = []
     router.use(`/.well-known/apollo/server-health`, (req: Request, res:Response) => {
       // Response follows https://tools.ietf.org/html/draft-inadarei-api-health-check-01
