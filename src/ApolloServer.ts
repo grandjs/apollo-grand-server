@@ -66,7 +66,7 @@ export class ApolloServer extends ApolloServerBase {
     req: Request,
     res: Response,
   ): Promise<GraphQLOptions> {
-    return super.graphQLServerOptions({ req: Request, res:Response });
+    return super.graphQLServerOptions({ req, res });
   }
 
   protected supportsSubscriptions(): boolean {
