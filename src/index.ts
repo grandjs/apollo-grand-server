@@ -33,3 +33,4 @@ export {
 } from './types';
 export { CorsOptions } from 'cors';
 export { OptionsJson } from 'body-parser';
+export * from './grandApollo';

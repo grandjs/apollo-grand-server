@@ -1,12 +1,14 @@
 // import express from 'express';
-import { Request, Response } from 'grandjs';
+import { Request, Response, APiError, APiResponseInterface, ErrorInfo, HttpStatusCode, APiType } from 'grandjs';
 import {
   GraphQLOptions,
   HttpQueryError,
   runHttpQuery,
   convertNodeHttpToRequest,
+  ApolloError
 } from 'apollo-server-core';
 import { ValueOrPromise } from 'apollo-server-types';
+import { GraphQLError } from 'graphql';
 
 export interface GrandGraphQLOptionsFunction {
   (req: Request, res: Response): ValueOrPromise<GraphQLOptions>;
@@ -71,4 +73,44 @@ export function graphqlGrand(
       },
     );
   };
+}
+
+
+export class GQLApiError extends Error{
+  readonly type:string = 'GQLApiError';
+  readonly textCode: string
+  message:string
+  defaultMessage?:string
+  status: HttpStatusCode = HttpStatusCode.BAD_REQUEST
+  validations?:any[]
+  data?:any
+  [key:string]:any
+  constructor(info: ErrorInfo) {
+    super(<string>info.message)
+    this.textCode = info.textCode;
+    this.message = typeof info.message === "object" ? info.message?.message : info.message;
+    this.status = info.status as any || this.status;
+    this.validations = info.validations;
+    this.data = info.data;
+      this.defaultMessage = info.defaultMessage || <string>info.message;;
+    if(!this.message) {
+        this.message = this.defaultMessage;
+    }
+}
+}
+export const assignErrorValues = (incomingError: GraphQLError, grandError:GQLApiError) => {
+  Object.assign(incomingError.extensions.exception, { ...grandError, message: grandError.message });
+  incomingError.message = grandError.message;
+  delete incomingError.extensions.exception.type;
+  return incomingError;
+}
+export const FormatError = (error: GraphQLError): any => {
+
+  if (error.originalError instanceof GQLApiError) {
+      error = assignErrorValues(error, error.originalError);
+  } else {
+      const formattedError = new GQLApiError({ message: error.message, textCode: error.extensions.code, status: <any>HttpStatusCode[error.extensions.code] || HttpStatusCode.INTERNAL_SERVER });
+      error = assignErrorValues(error, formattedError);
+  }
+  return error;
 }
