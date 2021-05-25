@@ -102,10 +102,12 @@ export const assignErrorValues = (incomingError: GraphQLError, grandError:GQLApi
   Object.assign(incomingError.extensions.exception, { ...grandError, message: grandError.message });
   incomingError.message = grandError.message;
   delete incomingError.extensions.exception.type;
+  incomingError.extensions.code = incomingError.extensions.exception.textCode;
   return incomingError;
 }
 export const FormatError = (error: GraphQLError): any => {
 
+  error.extensions.exception = error.extensions.exception || {};
   if (error.originalError instanceof GQLApiError) {
       error = assignErrorValues(error, error.originalError);
   } else {
